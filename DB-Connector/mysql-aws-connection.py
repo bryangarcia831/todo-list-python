@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, NoSectionError
 
 parser = SafeConfigParser()
 parser.read('../properties.ini')
@@ -11,9 +11,11 @@ try:
                                   password=parser.get('aws-user-pw', 'password'))
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("Incorrect User or Password")
+        print("Incorrect user or password")
     else:
         print(err)
+except NoSectionError as err:
+    print('You need the correct Properties file in your root directory')
 else:
-    print('connection successful')
+    print('Connection successful')
     cnx.close()
