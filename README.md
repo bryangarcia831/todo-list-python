@@ -1,10 +1,14 @@
 # todo-list-python
 
 ### Project Details
-Python Flask Webpage for a TODO list with AWS/MYSQL Backend
+Python Flask Webpage for a TODO list with AWS/MYSQL Backend. Using SQLAlchemy for database connection as well as object mapping.
+
+Going to be used for personal use. 
 
 ***
 
-### UML Diagram 
-## 1.0
-![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.0.png "Version 1.0 UML")
+### UML Diagrams
+## 1.1
+![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.1.png "Version 1.0 UML")
+### Older versions
+[1.0 - Wrong order on cardinality](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.0.png) 
