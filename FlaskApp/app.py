@@ -3,7 +3,8 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from ConfigParser import SafeConfigParser, NoSectionError
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../static')
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # dialect+driver://username:password@host:port/database
 try:
@@ -40,10 +41,10 @@ class Todo(db.Model):
 def main():
     bryan = User.query.filter_by(firstName='Bryan').first()
     todos = Todo.query.filter_by(createdBy=bryan.id).all()
-    print bryan.firstName + ' ' + bryan.lastName
-    if todos is not None:
-        for todo in todos:
-            print todo.text
+    # print bryan.firstName + ' ' + bryan.lastName
+    # if todos is not None:
+    #     for todo in todos:
+    #         print todo.text
 
     return render_template(
         'main-page.html', todos=todos)

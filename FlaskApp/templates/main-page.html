@@ -2,15 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/main-page.css') }}">-->
+    <link rel="stylesheet" href="../static/css/main-page.css">
+
     <title>Todo List</title>
-    <h1>Bryan's Todo List</h1>
 </head>
 <body>
-<ul class='Todo'>
+<h1>Bryan's Todo List</h1>
+<table>
+    <tr>
+        <th>Text</th>
+        <th>Due Date</th>
+    </tr>
+    <tbody>
     {% for todo in todos %}
-        <li>{{ todo.text }}</li>
+    <tr>
+        <td> {{ todo.text }} </td>
+        <td> {{ todo.dueDate}} </td>
+    </tr>
     {% endfor %}
-</ul>
-
+</tbody>
+</table>
 </body>
 </html>
