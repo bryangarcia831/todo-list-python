@@ -1,4 +1,4 @@
-import parser
+import datetime
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from ConfigParser import SafeConfigParser, NoSectionError
@@ -41,10 +41,11 @@ class Todo(db.Model):
 def main():
     bryan = User.query.filter_by(firstName='Bryan').first()
     todos = Todo.query.filter_by(createdBy=bryan.id).all()
-    # print bryan.firstName + ' ' + bryan.lastName
-    # if todos is not None:
-    #     for todo in todos:
-    #         print todo.text
+    if todos is not None:
+        f = '%B %d, %Y %I:%M %p'
+        for todo in todos:
+            todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
+            todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
 
     return render_template(
         'main-page.html', todos=todos)
