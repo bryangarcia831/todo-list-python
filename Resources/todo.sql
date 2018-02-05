@@ -7,4 +7,4 @@ CREATE TABLE `todo` (
   PRIMARY KEY (`id`,`createdBy`),
   KEY `createdBy` (`createdBy`),
   CONSTRAINT `todo_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
