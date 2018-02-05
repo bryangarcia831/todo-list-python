@@ -39,10 +39,11 @@ table {
     padding: 15px;
     border-collapse: collapse;
     width: 100%;
+    background: #f7f7f7;
 }
 
 tr:nth-child(even) {
-    background-color: #ececec;
+    background-color: #dfdfdf;
 }
 
 div, body {
