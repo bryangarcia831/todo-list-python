@@ -3,12 +3,18 @@ import datetime
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_navigation import Navigation
 from ConfigParser import SafeConfigParser, NoSectionError
 from passlib.hash import sha256_crypt
 
 app = Flask(__name__, static_folder='../static')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+nav = Navigation(app)
 
+nav.Bar('top', [
+    nav.Item('Home', 'home'),
+])
 
 # dialect+driver://username:password@host:port/database
 try:
@@ -46,20 +52,20 @@ class Todo(db.Model):
 
 @app.route("/")
 @app.route("/home")
-def main():
+def home():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-        # return render_template('login.html')
     else:
-        bryan = User.query.filter_by(firstName='Bryan').first()
-        todos = Todo.query.filter_by(createdBy=bryan.id).all()
+        cur_user = User.query.filter_by(email=session['email']).first()
+        todos = Todo.query.filter_by(createdBy=cur_user.id).all()
+        first_name = cur_user.firstName
         if todos is not None:
             f = '%B %d, %Y %I:%M %p'
             for todo in todos:
                 todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
                 todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
         return render_template(
-            'main-page.html', todos=todos)
+            'main-page.html', todos=todos, first_name=first_name)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -74,7 +80,8 @@ def login():
             error = 'Invalid Credentials. Please try again.'
         else:
             session['logged_in'] = True
-            return redirect(url_for('main'))
+            session['email'] = email
+            return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
 

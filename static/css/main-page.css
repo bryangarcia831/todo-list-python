@@ -1,5 +1,30 @@
-td{
-    /*border: 1px solid black;*/
+.navbar div {
+    overflow: hidden;
+}
+
+.navbar ul {
+    list-style-type: none;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.navbar li {
+    float: left;
+}
+
+.navbar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 5px 5px;
+    text-decoration: none;
+}
+
+.navbar li a:hover {
+    background-color: #111;
+}
+
+td {
     text-align: left;
     padding: 15px;
     border: 1px solid #c6c6c6;
@@ -18,4 +43,24 @@ table {
 
 tr:nth-child(even) {
     background-color: #ececec;
+}
+
+div, body {
+    background: #cdd6db;
+    color: #000000;
+    width: 100%;
+    line-height: 50px;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.content {
+    margin: 20px;
+}
+
+* {
+  margin: 0;
 }
