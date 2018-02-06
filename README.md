@@ -1,7 +1,7 @@
 # todo-list-python
 
 ### Project Details
-[Python Flask](http://flask.pocoo.org) Webpage for a TODO list with [AWS RDS/MYSQL Backend](https://aws.amazon.com/rds/mysql/). Using [SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) for database connection as well as object mapping. Flask will be used for the server and displaying. Pages are in HTML with CSS styling.
+[Python Flask](http://flask.pocoo.org) Webpage for a TODO list with [AWS RDS/MYSQL Backend](https://aws.amazon.com/rds/mysql/). Using [SQLAlchemy](http://flask-sqlalchemy.pocoo.org/) for database connection as well as object mapping. Flask will be used for the server and displaying. Pages are in HTML with CSS styling. Inserting todos with date is done with natural lanauge via [Recurrent](https://github.com/kvh/recurrent).
 
 Going to be used for personal use. Here are [SQL files](https://github.com/bryangarcia831/todo-list-python/tree/master/Resources) to create DB as well as fake copy of properties ([properties_test.ini](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/properties_test.ini)) to show how it is used and implemented.
 

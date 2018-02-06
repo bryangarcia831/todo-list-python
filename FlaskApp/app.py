@@ -63,6 +63,16 @@ class Todo(db.Model):
         self.text = text
 
 
+@app.route('/logout', methods=['GET'])
+def logout():
+    """Logout route for users"""
+    response = redirect(url_for('login'))
+    response.delete_cookie('email')
+    response.delete_cookie('todo_cookie')
+    return response
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Login route for users"""
@@ -75,9 +85,12 @@ def login():
         if not sha256_crypt.verify(pw, temp_user.password):
             error = 'Invalid Credentials. Please try again.'
         else:
-            session['logged_in'] = True
-            session['email'] = email
-            return redirect(url_for('home'))
+            # session['logged_in'] = True
+            # session['email'] = email
+            response = redirect(url_for('home'))
+            response.set_cookie('email', email)
+            response.set_cookie('todo_cookie', email)
+            return response
     return render_template('login.html', error=error)
 
 
@@ -85,10 +98,11 @@ def login():
 @app.route('/home', methods=['POST', 'GET'])
 def home():
     """Home page for user's todos"""
-    if not session.get('logged_in'):
+    cookie = request.cookies.get('todo_cookie')
+    if not cookie:
         return redirect(url_for('login'))
     else:
-        cur_user = User.query.filter_by(email="bryangarcia831@gmail.com").first()
+        cur_user = User.query.filter_by(email=request.cookies.get('email')).first()
         first_name = cur_user.firstName
 
         if request.method == 'POST':
@@ -105,7 +119,7 @@ def home():
             created_at_time = datetime.datetime.strftime(datetime.datetime.now(), sql_time_format)
             due_time = datetime.datetime.strftime(datetime_due_time, sql_time_format)
 
-            # Creating the todo for the add to db
+            # Creating the to do for the add to db
             new_todo = Todo(None, due_time, created_at_time, cur_user.id, text)
             db.session.add(new_todo)
             db.session.commit()
