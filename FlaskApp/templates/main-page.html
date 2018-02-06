@@ -4,14 +4,20 @@
 <h1>{{ first_name }}'s Todo List</h1>
 <table>
     <tr>
+        <th><span class="glyphicon glyphicon-plus"></span></th>
         <th>Text</th>
         <th>Due Date</th>
+        <th>Delete</th>
     </tr>
     <tbody>
     {% for todo in todos %}
     <tr>
+        <td><input type="checkbox"></td>
         <td> {{ todo.text }}</td>
         <td> {{ todo.dueDateFormat}}</td>
+        <td><a href="#">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a></td>
     </tr>
     {% endfor %}
     </tbody>

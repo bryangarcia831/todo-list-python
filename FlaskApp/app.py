@@ -191,7 +191,7 @@ def home():
 
         todos = Todo.query.filter_by(createdBy=cur_user.id).all()
         if todos is not None:
-            f = '%B %d, %Y %I:%M %p'
+            f = '%A, %b %d %I:%M %p'
             for todo in todos:
                 todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
                 todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
