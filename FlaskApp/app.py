@@ -170,6 +170,10 @@ def home():
 
         if request.method == 'POST':
             """Once a todo is added, we process and add it"""
+            created_at_time = get_timestamp_sql()
+            log = UserLogActivity(None, cur_user.id, "add todo", created_at_time, request.remote_addr)
+            db.session.add(log)
+
             text = request.form['text']
             raw_due_time = request.form['duedate']
 
@@ -177,7 +181,6 @@ def home():
             r = RecurringEvent(now_date=datetime.datetime.now())
             datetime_due_time = r.parse(raw_due_time)
 
-            created_at_time = get_timestamp_sql()
             sql_time_format = '%Y-%m-%d %H:%M:%S'
             due_time = datetime.datetime.strftime(datetime_due_time, sql_time_format)
 
