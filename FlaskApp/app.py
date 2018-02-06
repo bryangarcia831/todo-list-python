@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_navigation import Navigation
 from recurrent import RecurringEvent
-from wtforms import Form, BooleanField, StringField, PasswordField, validators
+from wtforms import Form, StringField, PasswordField, validators
 
 from ConfigParser import SafeConfigParser, NoSectionError
 from passlib.hash import sha256_crypt
@@ -82,19 +82,39 @@ class Todo(db.Model):
         self.text = text
 
 
+class UserLogActivity(db.Model):
+    """Object mapping of User Activity"""
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    activityType = db.Column(db.String(52), nullable=True)
+    time = db.Column(db.TIMESTAMP, nullable=False)
+    ipAddress = db.Column(db.String(32), nullable=True)
+
+    def __init__(self, id, userID, activityType, time, ipAddress):
+        self.id = id
+        self.userID = userID
+        self.activityType = activityType
+        self.time = time
+        self.ipAddress = ipAddress
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     """Logout route for users"""
     response = redirect(url_for('login'))
+
+    log = UserLogActivity(None, int(request.cookies.get('id')), "logout", get_timestamp_sql(), request.remote_addr)
+    db.session.add(log)
+    db.session.commit()
+
     response.delete_cookie('email')
-    response.delete_cookie('todo_cookie')
+    response.delete_cookie('id')
     return response
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
-
     if request.method == 'POST' and form.validate():
 
         user_first_name = form.first_name.data
@@ -117,6 +137,7 @@ def register():
 def login():
     """Login route for users"""
     error = None
+
     if request.method == 'POST':
         email = request.form['email']
         pw = request.form['password']
@@ -125,9 +146,13 @@ def login():
         if not sha256_crypt.verify(pw, temp_user.password):
             error = 'Invalid Credentials. Please try again.'
         else:
+            log = UserLogActivity(None, temp_user.id, "login", get_timestamp_sql(), request.remote_addr)
+            db.session.add(log)
+            db.session.commit()
+
             response = redirect(url_for('home'))
             response.set_cookie('email', email)
-            response.set_cookie('todo_cookie', email)
+            response.set_cookie('id', str(temp_user.id))
             return response
     return render_template('login.html', error=error)
 
@@ -136,7 +161,7 @@ def login():
 @app.route('/home', methods=['POST', 'GET'])
 def home():
     """Home page for user's todos"""
-    cookie = request.cookies.get('todo_cookie')
+    cookie = request.cookies.get('email')
     if not cookie:
         return redirect(url_for('login'))
     else:
@@ -152,9 +177,8 @@ def home():
             r = RecurringEvent(now_date=datetime.datetime.now())
             datetime_due_time = r.parse(raw_due_time)
 
-            # Format the date for SQL to be happy
+            created_at_time = get_timestamp_sql()
             sql_time_format = '%Y-%m-%d %H:%M:%S'
-            created_at_time = datetime.datetime.strftime(datetime.datetime.now(), sql_time_format)
             due_time = datetime.datetime.strftime(datetime_due_time, sql_time_format)
 
             # Creating the to do for the add to db
@@ -171,6 +195,13 @@ def home():
 
         return render_template(
             'main-page.html', todos=todos, first_name=first_name)
+
+
+def get_timestamp_sql():
+    """Method to get time right now for SQL inserts"""
+    sql_time_format = '%Y-%m-%d %H:%M:%S'
+    created_at_time = datetime.datetime.strftime(datetime.datetime.now(), sql_time_format)
+    return created_at_time
 
 
 if __name__ == "__main__":

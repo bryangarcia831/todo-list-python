@@ -8,7 +8,7 @@
                 </li>
                 {% endfor %}
             </div>
-                {% if request.cookies.get('todo_cookie') %}
+                {% if request.cookies.get('email') %}
             <div class="floatleft">
                 <li id="logout">
                     <a href={{url_for('logout')}}>Logout</a>
