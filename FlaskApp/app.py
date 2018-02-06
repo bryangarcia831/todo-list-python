@@ -14,6 +14,7 @@ nav = Navigation(app)
 
 nav.Bar('top', [
     nav.Item('Home', 'home'),
+
 ])
 
 # dialect+driver://username:password@host:port/database

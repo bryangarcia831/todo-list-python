@@ -1,11 +1,20 @@
 <div class="navbar">
     <div id="container">
         <ul>
-            {% for item in nav.top %}
-            <li class="{{ 'active' if item.is_active else '' }}">
-                <a href="{{ item.url }}">{{ item.label }}</a>
-            </li>
-            {% endfor %}
+            <div class="floatleft">
+                {% for item in nav.top %}
+                <li class="{{ 'active' if item.is_active else '' }}">
+                    <a href="{{ item.url }}">{{ item.label }}</a>
+                </li>
+                {% endfor %}
+            </div>
+                {% if session['logged_in'] %}
+            <div class="floatleft">
+                <li id="logout">
+                    <a href="url_for('logout')">Logout</a>
+                </li>
+            </div>
+                {% endif %}
         </ul>
     </div>
 </div>

@@ -1,11 +1,11 @@
 .navbar div {
-    overflow: hidden;
+    background-color: #333;
+    /*float: right;*/
 }
 
 .navbar ul {
     list-style-type: none;
     overflow: hidden;
-    background-color: #333;
 }
 
 .navbar li {
@@ -61,6 +61,20 @@ html, body {
 .content {
     margin: 20px;
 }
+
+.logout-button {
+    text-align: right;
+}
+
+/*.floatleft {*/
+    /*background-color: #333;*/
+    /*float: right;*/
+/*}*/
+
+/*div.floatright {*/
+    /*background-color: #333;*/
+    /*float:right;*/
+/*}*/
 
 * {
   margin: 0;

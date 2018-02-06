@@ -9,6 +9,7 @@ Going to be used for personal use. Added [SQL files](https://github.com/bryangar
 
 ### UML Diagrams
 ## 1.1
-![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.1.png "Version 1.0 UML")
+![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.2.png "Version 1.0 UML")
 ### Older versions
-[1.0 - Wrong order on cardinality](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.0.png) 
+* [1.1 - Did not have password attributes](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.1.png) 
+* [1.0 - Wrong order on cardinality](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.0.png) 
