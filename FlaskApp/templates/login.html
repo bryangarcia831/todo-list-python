@@ -12,6 +12,15 @@
     </form>
     {% if error %}
     <p class="error"><strong>Error:</strong> {{ error }}
-    {% endif %}
+        {% endif %}
+</div>
+<div class="registration">
+    <div id="container">
+        <ul>
+                <li id="logout">
+                    <a href={{url_for('register')}}>Register</a>
+                </li>
+        </ul>
+    </div>
 </div>
 {% endblock %}

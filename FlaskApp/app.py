@@ -1,10 +1,10 @@
 import datetime
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_navigation import Navigation
 from recurrent import RecurringEvent
-from wtforms import Form, StringField, validators
+from wtforms import Form, BooleanField, StringField, PasswordField, validators
 
 from ConfigParser import SafeConfigParser, NoSectionError
 from passlib.hash import sha256_crypt
@@ -18,6 +18,18 @@ nav.Bar('top', [
     nav.Item('Home', 'home'),
 
 ])
+
+
+class RegistrationForm(Form):
+    first_name = StringField('First Name', [validators.Length(min=1, max=35)])
+    last_name = StringField('Last Name', [validators.Length(min=1, max=35)])
+    email = StringField('Email Address', [validators.Length(min=6, max=35)])
+    password = PasswordField('New Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords must match')
+    ])
+    confirm = PasswordField('Repeat Password')
+
 
 # dialect+driver://username:password@host:port/database
 try:
@@ -46,6 +58,13 @@ class User(db.Model):
     email = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(256), nullable=False)
 
+    def __init__(self, id, firstName, lastName, email, password):
+        self.id = id
+        self.firstName = firstName
+        self.lastName = lastName
+        self.email = email
+        self.password = password
+
 
 class Todo(db.Model):
     """Object mapping of todos"""
@@ -72,6 +91,27 @@ def logout():
     return response
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+
+        user_first_name = form.first_name.data
+        user_last_name = form.last_name.data
+        user_email = form.email.data
+        user_password = str(form.password.data)
+        user_password = sha256_crypt.hash(user_password)
+
+        new_user = User(None, user_first_name, user_last_name, user_email, user_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Thanks for registering ' + user_first_name + '!')
+        return redirect(url_for('login'))
+
+    return render_template('register.html', form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -85,8 +125,6 @@ def login():
         if not sha256_crypt.verify(pw, temp_user.password):
             error = 'Invalid Credentials. Please try again.'
         else:
-            # session['logged_in'] = True
-            # session['email'] = email
             response = redirect(url_for('home'))
             response.set_cookie('email', email)
             response.set_cookie('todo_cookie', email)

@@ -1,0 +1,16 @@
+{% from "_formhelpers.html" import render_field %}
+{% extends "layout.html" %}
+{% block content %}
+
+<form method=post>
+  <dl>
+    {{ render_field(form.first_name) }}
+    {{ render_field(form.last_name) }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.confirm) }}
+  </dl>
+  <p><input type=submit value=Register>
+</form>
+
+{% endblock %}

@@ -24,6 +24,33 @@
     background-color: #111;
 }
 
+.registration div {
+    background-color: #333;
+    width: 75px;
+}
+
+.registration li a {
+    color: white;
+    text-align: left;
+    text-decoration: none;
+}
+
+.registration li {
+    float: left;
+    background-color: #111;
+}
+
+.registration li a:hover {
+    background-color: #111;
+}
+
+.registration ul {
+    background-color: #111;
+    list-style-type: none;
+    width: 75px;
+    /*overflow: hidden;*/
+}
+
 td {
     text-align: left;
     padding: 15px;
