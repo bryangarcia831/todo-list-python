@@ -58,6 +58,10 @@ html, body {
     overflow-x: hidden;
 }
 
+.add-task div {
+    width: 100%;
+}
+
 .content {
     margin: 20px;
 }
@@ -66,16 +70,45 @@ html, body {
     text-align: right;
 }
 
+.full-width {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/*.inputbox-add-task {*/
+    /*padding: 0 5px 0 0;*/
+    /*overflow: hidden;*/
+    /*float:left;*/
+/*}*/
+
+.inputbox-add-task input {
+    width: 50%;
+    float:left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
+/*ul {*/
+  /*list-style: none;*/
+  /*padding: 0;*/
+/*}*/
+
 /*.floatleft {*/
-    /*background-color: #333;*/
-    /*float: right;*/
+/*background-color: #333;*/
+/*float: right;*/
 /*}*/
 
 /*div.floatright {*/
-    /*background-color: #333;*/
-    /*float:right;*/
+/*background-color: #333;*/
+/*float:right;*/
 /*}*/
 
 * {
-  margin: 0;
+    margin: 0;
 }
