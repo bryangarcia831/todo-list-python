@@ -2,6 +2,7 @@ import datetime
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.mysql import TINYINT
 from flask_navigation import Navigation
 from recurrent import RecurringEvent
 from wtforms import Form, StringField, PasswordField, validators
@@ -73,6 +74,7 @@ class Todo(db.Model):
     createdAt = db.Column(db.TIMESTAMP, nullable=False)
     createdBy = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     text = db.Column(db.Text, nullable=True)
+    completed = db.Column(TINYINT(1), nullable=True)
 
     def __init__(self, id, dueDate, createdAt, createdBy, text):
         self.id = id
@@ -80,6 +82,7 @@ class Todo(db.Model):
         self.createdAt = createdAt
         self.createdBy = createdBy
         self.text = text
+        self.completed = 0
 
 
 class UserLogActivity(db.Model):
@@ -195,6 +198,10 @@ def home():
             for todo in todos:
                 todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
                 todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
+                if todo.completed == 0:
+                    todo.completed = False
+                else:
+                    todo.completed = True
 
         return render_template(
             'main-page.html', todos=todos, first_name=first_name)
