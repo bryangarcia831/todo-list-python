@@ -94,13 +94,15 @@ class UserLogActivity(db.Model):
     activityType = db.Column(db.String(52), nullable=True)
     time = db.Column(db.TIMESTAMP, nullable=False)
     ipAddress = db.Column(db.String(32), nullable=True)
+    details = db.Column(db.Text)
 
-    def __init__(self, id, userID, activityType, time, ipAddress):
+    def __init__(self, id, userID, activityType, time, ipAddress, details=None):
         self.id = id
         self.userID = userID
         self.activityType = activityType
         self.time = time
         self.ipAddress = ipAddress
+        self.details = details
 
 
 @app.route('/logout', methods=['GET'])
@@ -197,9 +199,13 @@ def home(delete_id=None):
 
         if delete_id:
             del_todo = Todo.query.filter_by(id=delete_id).first()
-            del_todo.deleted = 1
-            db.session.add(del_todo)
-            db.session.commit()
+            if del_todo:
+                log = UserLogActivity(None, cur_user.id, "delete todo", get_timestamp_sql(),
+                                      request.remote_addr, del_todo.id)
+                db.session.add(log)
+                del_todo.deleted = 1
+                db.session.add(del_todo)
+                db.session.commit()
 
         todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).all()
         if todos is not None:
