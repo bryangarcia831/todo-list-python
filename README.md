@@ -9,9 +9,10 @@ Going to be used for personal use. Here are [SQL files](https://github.com/bryan
 
 ### UML Diagrams
 Overall view of the schema design. Using [StarUML](http://staruml.io) for diagramming.
-## 1.3
-![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.3.png "Version 1.3 UML")
+## 1.4
+![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.4.png "Version 1.4 UML")
 ### Older versions
+* [1.3 - No completed/not completed](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.2.png) 
 * [1.2 - Before user_log_activity](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.2.png) 
 * [1.1 - Did not have password attributes](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.1.png) 
 * [1.0 - Wrong order on cardinality](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/TODO-UML-1.0.png) 
