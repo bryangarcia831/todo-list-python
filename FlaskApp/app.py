@@ -75,6 +75,7 @@ class Todo(db.Model):
     createdBy = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     text = db.Column(db.Text, nullable=True)
     completed = db.Column(TINYINT(1), nullable=True)
+    deleted = db.Column(TINYINT(1), nullable=True)
 
     def __init__(self, id, dueDate, createdAt, createdBy, text):
         self.id = id
@@ -83,6 +84,7 @@ class Todo(db.Model):
         self.createdBy = createdBy
         self.text = text
         self.completed = 0
+        self.deleted = 0
 
 
 class UserLogActivity(db.Model):
@@ -162,7 +164,8 @@ def login():
 
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
-def home():
+@app.route('/delete/<int:delete_id>')
+def home(delete_id=None):
     """Home page for user's todos"""
     cookie = request.cookies.get('email')
     if not cookie:
@@ -192,7 +195,13 @@ def home():
             db.session.add(new_todo)
             db.session.commit()
 
-        todos = Todo.query.filter_by(createdBy=cur_user.id).all()
+        if delete_id:
+            del_todo = Todo.query.filter_by(id=delete_id).first()
+            del_todo.deleted = 1
+            db.session.add(del_todo)
+            db.session.commit()
+
+        todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).all()
         if todos is not None:
             f = '%A, %b %d %I:%M %p'
             for todo in todos:

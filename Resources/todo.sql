@@ -5,6 +5,7 @@ CREATE TABLE `todo` (
   `createdAt` timestamp NULL DEFAULT NULL,
   `text` varchar(140) DEFAULT NULL,
   `completed` tinyint(1) DEFAULT '0',
+  `deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`,`createdBy`),
   KEY `createdBy` (`createdBy`),
   CONSTRAINT `todo_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
