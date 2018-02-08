@@ -7,7 +7,7 @@ Going to be used for personal use. Here are [SQL files](https://github.com/bryan
 
 
 ### Screenshot
-![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/Screenshots/screenshot_1.0.png "Screenshot of App")
+![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/Screenshots/screenshot_1.1.png "Screenshot of App")
 
 ***
 
