@@ -198,11 +198,12 @@ def deleted(todo_id=None):
         'deleted-todos-page.html', todos=todos)
 
 
+@app.route('/reverse/<order>')
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
 @app.route('/delete/<int:delete_id>')
 @app.route('/check/<int:todo_id>')
-def home(delete_id=None, todo_id=None):
+def home(delete_id=None, todo_id=None, order="ASC"):
     """Home page for user's todos"""
     cookie = request.cookies.get('email')
     if not cookie:
@@ -255,7 +256,22 @@ def home(delete_id=None, todo_id=None):
             db.session.add(del_todo)
             db.session.commit()
 
-    todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).all()
+    if request.path.startswith('/reverse/'):
+        if order == "ASC":
+            order = "DESC"
+        else:
+            order = "ASC"
+
+    if order == "ASC":
+        todos = list(reversed(Todo.query.filter_by(createdBy=cur_user.id, deleted=0).order_by(Todo.dueDate).all()))
+    else:
+        todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).order_by(Todo.dueDate).all()
+
+    if order == "ASC":
+        asc_order = True
+    else:
+        asc_order = False
+
     if todos is not None:
         f = '%A, %b %d %I:%M %p'
         for todo in todos:
@@ -267,7 +283,7 @@ def home(delete_id=None, todo_id=None):
                 todo.completed = True
 
     return render_template(
-        'main-page.html', todos=todos, first_name=first_name)
+        'main-page.html', todos=todos, first_name=first_name, asc_order=asc_order)
 
 
 def get_timestamp_sql():
