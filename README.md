@@ -9,7 +9,7 @@ Going to be used for personal use. Here are [SQL files](https://github.com/bryan
 ### Screenshot
 ![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/Screenshots/home_screenshot_1.2.png "Screenshot of Homepage")
 
-![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/Screenshots/restore_screenshot_1.2.png "Screenshot of Restore / Deleted")
+![alt text](https://raw.githubusercontent.com/bryangarcia831/todo-list-python/master/images/Screenshots/restore_screenshot_1.0.png "Screenshot of Restore / Deleted")
 
 ***
 
