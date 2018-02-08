@@ -163,6 +163,38 @@ def login():
     return render_template('login.html', error=error)
 
 
+@app.route('/deleted')
+@app.route('/restore/<int:todo_id>')
+def deleted(todo_id=None):
+    """Deleted page for user's todos"""
+    cookie = request.cookies.get('email')
+    if not cookie:
+        return redirect(url_for('login'))
+    cur_user = User.query.filter_by(email=request.cookies.get('email')).first()
+    first_name = cur_user.firstName
+
+    if request.path.startswith('/restore/'):
+        restore_todo = Todo.query.filter_by(id=todo_id).first()
+        restore_todo.deleted = 0
+        db.session.add(restore_todo)
+        db.session.commit()
+
+    todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=1).all()
+
+    if todos is not None:
+        f = '%A, %b %d %I:%M %p'
+        for todo in todos:
+            todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
+            todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
+            if todo.completed == 0:
+                todo.completed = False
+            else:
+                todo.completed = True
+
+    return render_template(
+        'deleted-todos-page.html', todos=todos, first_name=first_name)
+
+
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
 @app.route('/delete/<int:delete_id>')
@@ -172,30 +204,32 @@ def home(delete_id=None, todo_id=None):
     cookie = request.cookies.get('email')
     if not cookie:
         return redirect(url_for('login'))
-    else:
-        cur_user = User.query.filter_by(email=request.cookies.get('email')).first()
-        first_name = cur_user.firstName
 
-        if request.method == 'POST':
-            """Once a todo is added, we process and add it"""
-            created_at_time = get_timestamp_sql()
-            log = UserLogActivity(None, cur_user.id, "add todo", created_at_time, request.remote_addr)
-            db.session.add(log)
+    cur_user = User.query.filter_by(email=request.cookies.get('email')).first()
+    first_name = cur_user.firstName
 
-            text = request.form['text']
-            raw_due_time = request.form['duedate']
+    if request.method == 'POST':
+        """Once a todo is added, we process and add it"""
+        created_at_time = get_timestamp_sql()
 
-            # Natural language processing of date
-            r = RecurringEvent(now_date=datetime.datetime.now())
-            datetime_due_time = r.parse(raw_due_time)
+        text = request.form['text']
+        raw_due_time = request.form['duedate']
 
-            sql_time_format = '%Y-%m-%d %H:%M:%S'
-            due_time = datetime.datetime.strftime(datetime_due_time, sql_time_format)
+        # Natural language processing of date
+        r = RecurringEvent(now_date=datetime.datetime.now())
+        datetime_due_time = r.parse(raw_due_time)
 
-            # Creating the to do for the add to db
-            new_todo = Todo(None, due_time, created_at_time, cur_user.id, text)
-            db.session.add(new_todo)
-            db.session.commit()
+        sql_time_format = '%Y-%m-%d %H:%M:%S'
+        due_time = datetime.datetime.strftime(datetime_due_time, sql_time_format)
+
+        # Creating the to do for the add to db
+        new_todo = Todo(None, due_time, created_at_time, cur_user.id, text)
+        db.session.add(new_todo)
+
+        log = UserLogActivity(None, cur_user.id, "add todo", created_at_time, request.remote_addr)
+        db.session.add(log)
+
+        db.session.commit()
 
     # check if we switching completed
     if request.path.startswith('/check/'):
@@ -209,7 +243,7 @@ def home(delete_id=None, todo_id=None):
 
     # check if we deleting
     if delete_id:
-        del_todo = Todo.query.filter_by(id=delete_id).first()
+        del_todo = Todo.query.filter_by(id=delete_id, deleted=0).first()
         if del_todo:
             log = UserLogActivity(None, cur_user.id, "delete todo", get_timestamp_sql(),
                                   request.remote_addr, del_todo.id)

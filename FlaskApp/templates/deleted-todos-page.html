@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>{{ first_name }}'s Deleted Todo's</h1>
+<table>
+    <tr>
+        <th><span class="glyphicon glyphicon-ok"></span></th>
+        <th>Text</th>
+        <th>Due Date</th>
+        <th>Restore</th>
+    </tr>
+    <tbody>
+    {% for todo in todos %}
+    <tr>
+        {% if todo.completed %}
+        <td><a href="/check/{{todo.id}}">
+            <span class="glyphicon glyphicon-check" style="color:#00ff04"></span>
+        </a></td>
+        {% else %}
+       <td><a href="/check/{{todo.id}}">
+            <span class="glyphicon glyphicon-check" style="color:#ff5200"></span>
+        </a></td>
+        {% endif %}
+        <td> {{ todo.text }}</td>
+        <td> {{ todo.dueDateFormat}}</td>
+        <td><a href="/restore/{{todo.id}}">
+            <span class="glyphicon glyphicon-repeat" style="color:#00ff04"></span>
+        </a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<br>
+{% endblock %}
