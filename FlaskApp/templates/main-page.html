@@ -2,6 +2,9 @@
 
 {% block content %}
 <h1>{{ first_name }}'s Todo List</h1>
+{% include 'add-task.html' %}
+<br>
+<br>
 <table>
     <tr>
         <th><span class="glyphicon glyphicon-ok"></span></th>
@@ -24,13 +27,10 @@
         <td> {{ todo.text }}</td>
         <td> {{ todo.dueDateFormat}}</td>
         <td><a href="/delete/{{todo.id}}">
-            <span class="glyphicon glyphicon-remove"></span>
+            <span class="glyphicon glyphicon-remove" style="color:#ff0000"></span>
         </a></td>
     </tr>
     {% endfor %}
     </tbody>
 </table>
-<br>
-{% include 'add-task.html' %}
-
 {% endblock %}

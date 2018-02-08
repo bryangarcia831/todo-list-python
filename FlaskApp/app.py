@@ -170,10 +170,13 @@ def deleted(todo_id=None):
     cookie = request.cookies.get('email')
     if not cookie:
         return redirect(url_for('login'))
+
     cur_user = User.query.filter_by(email=request.cookies.get('email')).first()
-    first_name = cur_user.firstName
 
     if request.path.startswith('/restore/'):
+        log = UserLogActivity(None, cur_user.id, "restore todo", get_timestamp_sql(),
+                              request.remote_addr, todo_id)
+        db.session.add(log)
         restore_todo = Todo.query.filter_by(id=todo_id).first()
         restore_todo.deleted = 0
         db.session.add(restore_todo)
@@ -192,7 +195,7 @@ def deleted(todo_id=None):
                 todo.completed = True
 
     return render_template(
-        'deleted-todos-page.html', todos=todos, first_name=first_name)
+        'deleted-todos-page.html', todos=todos)
 
 
 @app.route('/', methods=['POST', 'GET'])
