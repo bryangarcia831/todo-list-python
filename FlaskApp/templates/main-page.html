@@ -13,9 +13,13 @@
     {% for todo in todos %}
     <tr>
         {% if todo.completed %}
-        <td><input type="checkbox" checked></td>
+        <td><a href="/check/{{todo.id}}">
+            <span class="glyphicon glyphicon-check" style="color:#00ff04"></span>
+        </a></td>
         {% else %}
-        <td><input type="checkbox"></td>
+       <td><a href="/check/{{todo.id}}">
+            <span class="glyphicon glyphicon-check" style="color:#ff5200"></span>
+        </a></td>
         {% endif %}
         <td> {{ todo.text }}</td>
         <td> {{ todo.dueDateFormat}}</td>

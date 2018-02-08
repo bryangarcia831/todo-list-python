@@ -38,13 +38,13 @@ try:
     parser = SafeConfigParser()
     parser.read('../properties.ini')
 
-    host = parser.get('aws-user-pw', 'host')
-    user = parser.get('aws-user-pw', 'user')
-    password = parser.get('aws-user-pw', 'password')
-    port = parser.get('aws-user-pw', 'port')
-    database = parser.get('aws-user-pw', 'todo-database')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + user + ':' + password + \
-                                            '@' + host + ':' + port + '/' + database
+    db_host = parser.get('aws-user-pw', 'host')
+    db_user = parser.get('aws-user-pw', 'user')
+    db_password = parser.get('aws-user-pw', 'password')
+    db_port = parser.get('aws-user-pw', 'port')
+    db_database = parser.get('aws-user-pw', 'todo-database')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + db_user + ':' + db_password + \
+                                            '@' + db_host + ':' + db_port + '/' + db_database
 except NoSectionError as err:
     print('You need the correct Properties file in your root directory')
 
@@ -59,10 +59,10 @@ class User(db.Model):
     email = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(256), nullable=False)
 
-    def __init__(self, id, firstName, lastName, email, password):
+    def __init__(self, id, first_name, last_name, email, password):
         self.id = id
-        self.firstName = firstName
-        self.lastName = lastName
+        self.firstName = first_name
+        self.lastName = last_name
         self.email = email
         self.password = password
 
@@ -77,11 +77,11 @@ class Todo(db.Model):
     completed = db.Column(TINYINT(1), nullable=True)
     deleted = db.Column(TINYINT(1), nullable=True)
 
-    def __init__(self, id, dueDate, createdAt, createdBy, text):
+    def __init__(self, id, due_date, created_at, created_by, text):
         self.id = id
-        self.dueDate = dueDate
-        self.createdAt = createdAt
-        self.createdBy = createdBy
+        self.dueDate = due_date
+        self.createdAt = created_at
+        self.createdBy = created_by
         self.text = text
         self.completed = 0
         self.deleted = 0
@@ -96,12 +96,12 @@ class UserLogActivity(db.Model):
     ipAddress = db.Column(db.String(32), nullable=True)
     details = db.Column(db.Text)
 
-    def __init__(self, id, userID, activityType, time, ipAddress, details=None):
+    def __init__(self, id, user_id, activity_type, time, ip_address, details=None):
         self.id = id
-        self.userID = userID
-        self.activityType = activityType
+        self.userID = user_id
+        self.activityType = activity_type
         self.time = time
-        self.ipAddress = ipAddress
+        self.ipAddress = ip_address
         self.details = details
 
 
@@ -123,7 +123,6 @@ def logout():
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
-
         user_first_name = form.first_name.data
         user_last_name = form.last_name.data
         user_email = form.email.data
@@ -167,7 +166,8 @@ def login():
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/home', methods=['POST', 'GET'])
 @app.route('/delete/<int:delete_id>')
-def home(delete_id=None):
+@app.route('/check/<int:todo_id>')
+def home(delete_id=None, todo_id=None):
     """Home page for user's todos"""
     cookie = request.cookies.get('email')
     if not cookie:
@@ -197,29 +197,40 @@ def home(delete_id=None):
             db.session.add(new_todo)
             db.session.commit()
 
-        if delete_id:
-            del_todo = Todo.query.filter_by(id=delete_id).first()
-            if del_todo:
-                log = UserLogActivity(None, cur_user.id, "delete todo", get_timestamp_sql(),
-                                      request.remote_addr, del_todo.id)
-                db.session.add(log)
-                del_todo.deleted = 1
-                db.session.add(del_todo)
-                db.session.commit()
+    # check if we switching completed
+    if request.path.startswith('/check/'):
+        update_todo = Todo.query.filter_by(id=todo_id).first()
+        if update_todo.completed == 0:
+            update_todo.completed = 1
+        else:
+            update_todo.completed = 0
+        db.session.add(update_todo)
+        db.session.commit()
 
-        todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).all()
-        if todos is not None:
-            f = '%A, %b %d %I:%M %p'
-            for todo in todos:
-                todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
-                todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
-                if todo.completed == 0:
-                    todo.completed = False
-                else:
-                    todo.completed = True
+    # check if we deleting
+    if delete_id:
+        del_todo = Todo.query.filter_by(id=delete_id).first()
+        if del_todo:
+            log = UserLogActivity(None, cur_user.id, "delete todo", get_timestamp_sql(),
+                                  request.remote_addr, del_todo.id)
+            db.session.add(log)
+            del_todo.deleted = 1
+            db.session.add(del_todo)
+            db.session.commit()
 
-        return render_template(
-            'main-page.html', todos=todos, first_name=first_name)
+    todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).all()
+    if todos is not None:
+        f = '%A, %b %d %I:%M %p'
+        for todo in todos:
+            todo.dueDateFormat = datetime.datetime.strftime(todo.dueDate, f)
+            todo.createdAtFormat = datetime.datetime.strftime(todo.createdAt, f)
+            if todo.completed == 0:
+                todo.completed = False
+            else:
+                todo.completed = True
+
+    return render_template(
+        'main-page.html', todos=todos, first_name=first_name)
 
 
 def get_timestamp_sql():
