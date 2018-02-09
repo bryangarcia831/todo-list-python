@@ -1,11 +1,13 @@
 import datetime
+import json
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import TINYINT
 from flask_navigation import Navigation
 from recurrent import RecurringEvent
 from wtforms import Form, StringField, PasswordField, validators
+from flask_restplus import Api, fields, Resource
 
 from ConfigParser import SafeConfigParser, NoSectionError
 from passlib.hash import sha256_crypt
@@ -14,11 +16,6 @@ app = Flask(__name__, static_folder='../static')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 nav = Navigation(app)
-
-nav.Bar('top', [
-    nav.Item('Home', 'home'),
-
-])
 
 
 class RegistrationForm(Form):
@@ -58,6 +55,7 @@ class User(db.Model):
     lastName = db.Column(db.String(52), nullable=False)
     email = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(256), nullable=False)
+    api_key = db.Column(db.String(52), nullable=False)
 
     def __init__(self, id, first_name, last_name, email, password):
         self.id = id
@@ -292,6 +290,44 @@ def get_timestamp_sql():
     created_at_time = datetime.datetime.strftime(datetime.datetime.now(), sql_time_format)
     return created_at_time
 
+
+api = Api(app, version='1.0', title='Todo API',
+          description='Proof of Concept API')
+
+todo_ns = api.namespace('todo_api', 'Todo Methods')
+
+todo_model = api.model('Todo', {
+    'id': fields.Integer(required=False),
+    'dueDate': fields.DateTime(required=True, description='Time this is due'),
+    'text': fields.String(required=True, description='Text of the todo')
+})
+
+
+# APIs #
+@todo_ns.route('/<string:api_key>')
+class TodoApi(Resource):
+    @todo_ns.doc('List all todos')
+    def get(self, api_key):
+        '''List all tasks'''
+        cur_user = User.query.filter_by(api_key=api_key).first()
+        if not cur_user:
+            return "No such API key"
+        todos = Todo.query.filter_by(createdBy=cur_user.id, deleted=0).order_by(Todo.dueDate).all()
+        todos_json = {}
+        for todo in todos:
+            if todo.completed:
+                str_complete = "True"
+            else:
+                str_complete = "False"
+            todos_json[todo.id] = {"text": todo.text, "due date": str(todo.dueDate), "completed": str_complete}
+
+        return todos_json
+
+
+nav.Bar('top', [
+    nav.Item('Home', 'home'),
+
+])
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)

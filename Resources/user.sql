@@ -4,5 +4,6 @@ CREATE TABLE `user` (
   `lastName` varchar(52) DEFAULT NULL,
   `email` varchar(128) DEFAULT NULL,
   `password` varchar(256) DEFAULT NULL,
+  `api_key` varchar(52) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
